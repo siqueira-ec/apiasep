@@ -1,5 +1,5 @@
 # apiasep
-API para consulta de cotas de exames do IASEP. Basicamente um webcrawler. Powered by MongoDB e NodeJS.
+API para consulta de cotas de exames do IASEP. Basicamente um webcrawler. Powered by NodeJS.
 
 # instalando dependências
 yarn ou npm install
