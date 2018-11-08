@@ -1,0 +1,104 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "APIasep",
+    "description": "API para consulta de extrato de cotas do plano de saúde do governo do estado do Pará - IASEP",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "IASEP",
+      "description": "Rota para consultas"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/iasep": {
+      "get": {
+        "tags": [
+          "IASEP"
+        ],
+        "summary": "Consulta cota de consultas e exames tomando como parâmetro nº de adesão e cpf do segurado",
+        "description": "Consulta cotas",
+        "parameters": [
+          {
+            "name": "adesao",
+            "in": "query",
+            "description": "Número de adesão do usuário do plano",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "cpf",
+            "in": "query",
+            "description": "CPF do usuário do plano",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Extrato de cotas",
+            "schema": {
+              "$ref": "#/definitions/cota_response"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "cota_response": {
+      "required": [
+        "success",
+        "data"
+      ],
+      "properties": {
+        "sucess": {
+          "type": "boolean"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "saudacao": {
+              "type": "string",
+              "example": "BOA TARDE FULANO"
+            },
+            "consulta": {
+              "type": "object",
+              "properties": {
+                "qtd_contratual": {
+                  "type": "number",
+                  "example": 10
+                },
+                "qtd_utilizada": {
+                  "type": "number",
+                  "example": 4
+                },
+                "qtd_estornada": {
+                  "type": "number",
+                  "example": 0
+                },
+                "qtd_disponivel": {
+                  "type": "number",
+                  "example": 6
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

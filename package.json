@@ -1,0 +1,33 @@
+{
+  "name": "apiasep",
+  "version": "1.0.0",
+  "description": "API para consulta de cotas de exames do IASEP. Basicamente um webcrawler. Powered by MongoDB e NodeJS.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon",
+    "debug": "nodemon --inspect"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/siqueira-ec/apiasep.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/siqueira-ec/apiasep/issues"
+  },
+  "homepage": "https://github.com/siqueira-ec/apiasep#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.4",
+    "lodash": "^4.17.11",
+    "mongoose": "^5.3.7",
+    "request": "^2.88.0",
+    "swagger-ui-express": "^4.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.6"
+  }
+}

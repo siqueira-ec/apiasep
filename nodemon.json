@@ -1,0 +1,6 @@
+{
+    "events": {
+        "start": "node -e 'console.clear()'"
+    },
+    "signal": "SIGHUP"
+}
