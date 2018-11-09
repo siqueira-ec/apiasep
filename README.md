@@ -11,12 +11,12 @@ API para consulta de cotas de exames do IASEP. Basicamente um webcrawler. Powere
 ## Rodando com Docker
 ### Construa a imagem
 ```
-docker build -t apiasep:1.0.0 .
+docker build -t apiasep:1 .
 ```
 
 ### Inicie um container
 ```
-docker run -it --rm -p 3000:3000 apiasep
+docker run -it --rm -p 3000:3000 apiasep:1
 ```
 
 # Documentação
