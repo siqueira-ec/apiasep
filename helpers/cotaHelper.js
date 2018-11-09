@@ -46,9 +46,7 @@ let getCookie = async (cpf, adesao) => {
 };
 
 let getCota = async (cookie) => {
-    //  spread operators não funcionando no docker   
-    //     let uri = { ... uri_padrao };
-    let uri = Object.assign({}, uri_padrao);
+    let uri = { ... uri_padrao };
     uri.form = {
         'do': 'PortalSegurado.extrato'
     };
