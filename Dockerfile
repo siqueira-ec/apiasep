@@ -1,5 +1,5 @@
 # máquina nodejs
-FROM node:latest
+FROM node:11
 
 # criando diretório onde o app ficará armazenado na máquina
 RUN mkdir -p /usr/src/apiasep
