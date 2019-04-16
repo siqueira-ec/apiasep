@@ -4,7 +4,7 @@ let express = require('express'),
 
 // redireciona as requisições para a rota principal
 router.get('/', (req, res) => {
-    res.json(`{success: true, data: "Servidor online."}`);
+    res.json({success: true, data: "Servidor online."});
 });
 
 // encaminha tráfego pra rota /iasep
