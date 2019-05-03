@@ -45,8 +45,9 @@ let getCookie = async (cpf, adesao) => {
     return cookie;
 };
 
-let getCota = async (cookie) => {
+let getCota = async (cookie, format='json') => {
     let uri = { ... uri_padrao };
+    let cota;
     uri.form = {
         'do': 'PortalSegurado.extrato'
     };
@@ -57,45 +58,92 @@ let getCota = async (cookie) => {
 
     uri.uri = 'http://www.e-saude.iasep.pa.gov.br/segurado_iasep/?do=PortalSegurado.extrato';
 
-    let cota = await new Promise ((resolve, reject) => {
-        request(uri, (err, response, body) => {
-            err && console.error(err) && reject(err);
-
-            let $ = cheerio.load(body);
-
-            if (!($('table').length)) {
-                resolve({success: false, error: "Credenciais incorretas."});
-            } else {
-                let words = [], msg = '';
-
-                $('tr').each(function() {
-                    words.push({
-                        texto: $(this).text()
-                    });
-                });
-
-                let array_infos = {};
-                let obj_cotas = {};
-
-                obj_cotas['saudacao'] = $(".form_description h3").text();
-
-                for (let i=1; i<words.length; i++) {
-                    array_infos[i] = (words[i].texto.split(/\n/).filter((e) => {
-                        return e.trim().length > 0;
-                    })).map(Function.prototype.call, String.prototype.trim);
-
-                    obj_cotas[format_string(array_infos[i][0])] = {
-                        qtd_contratual: array_infos[i][1],
-                        qtd_utilizada: array_infos[i][2],
-                        qtd_estornada: array_infos[i][3],
-                        qtd_disponivel: array_infos[i][4]
+    switch (format) {
+        case 'text':
+            cota = await new Promise((resolve, reject) => {
+                request(uri, (err, response, body) => {
+                    err && console.error(err) && reject(err);
+        
+                    let $ = cheerio.load(body);
+            
+                    if (!($('table').length)) {
+                        resolve({success: false, error: "Credenciais incorretas."});
+                    } else {
+                        let words = [], msg = '';
+            
+                        $('tr').each(function() {
+                            words.push({
+                                texto: $(this).text()
+                            });
+                        });
+        
+                        let array_infos = {};
+                        let obj_cotas = {};
+            
+                        for (let i=1; i<words.length; i++) {
+                            array_infos[i] = (words[i].texto.split(/\n/).filter((e) => {
+                                return e.trim().length > 0;
+                            })).map(Function.prototype.call, String.prototype.trim);
+            
+                            msg += array_infos[i][0] + ':' + '\n\t'
+                                + 'Qtd. Contratual -> ' + array_infos[i][1] + '\n\t'
+                                + 'Qtd. Utilizada -> ' + array_infos[i][2] + '\n\t'
+                                + 'Qtd. Estornada -> ' + array_infos[i][3] + '\n\t'
+                                + 'Qtd. Disponível -> ' + array_infos[i][4] + '\n\n';
+                        }
+            
+                        msg = $(".form_description h3").text() + '\n\n'
+                            + $(".form_description p").text() + '\n\n' + msg;
+        
+                        resolve({success: true, data: msg});
                     }
-                }
-
-                resolve({success: true, data: obj_cotas});
-            }
-        });
-    });
+                });
+            });
+            break;
+        case 'json':
+            cota = await new Promise ((resolve, reject) => {
+                request(uri, (err, response, body) => {
+                    err && console.error(err) && reject(err);
+        
+                    let $ = cheerio.load(body);
+        
+                    if (!($('table').length)) {
+                        resolve({success: false, error: "Credenciais incorretas."});
+                    } else {
+                        let words = [], msg = '';
+        
+                        $('tr').each(function() {
+                            words.push({
+                                texto: $(this).text()
+                            });
+                        });
+        
+                        let array_infos = {};
+                        let obj_cotas = {};
+        
+                        obj_cotas['saudacao'] = $(".form_description h3").text();
+        
+                        for (let i=1; i<words.length; i++) {
+                            array_infos[i] = (words[i].texto.split(/\n/).filter((e) => {
+                                return e.trim().length > 0;
+                            })).map(Function.prototype.call, String.prototype.trim);
+        
+                            obj_cotas[format_string(array_infos[i][0])] = {
+                                qtd_contratual: array_infos[i][1],
+                                qtd_utilizada: array_infos[i][2],
+                                qtd_estornada: array_infos[i][3],
+                                qtd_disponivel: array_infos[i][4]
+                            }
+                        }
+        
+                        resolve({success: true, data: obj_cotas});
+                    }
+                });
+            });
+            break;
+        default:
+            break;
+    }
 
     return cota;
 };
@@ -104,11 +152,12 @@ let getCota = async (cookie) => {
 exports.get_cota = async (req, res) => {
     let {
         cpf,
-        adesao
+        adesao,
+        format
     } = req.query;
 
     let cookie = await getCookie(cpf, adesao);
-    let cota = await getCota(cookie);
+    let cota = await getCota(cookie, format);
 
     cota.success && res.json({success: true, data: cota.data});
     !cota.success && res.json({success: false, error: cota.error});

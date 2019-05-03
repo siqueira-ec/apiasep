@@ -42,6 +42,13 @@
             "description": "CPF do usuário do plano",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "description": "Formato da resposta, json para resposta em json e text para resposta tratada em texto.",
+            "required": false,
+            "type": "string"
           }
         ],
         "produces": [
