@@ -141,6 +141,48 @@ let getCota = async (cookie, format='json') => {
                 });
             });
             break;
+        case 'json_desc':
+            cota = await new Promise ((resolve, reject) => {
+                request(uri, (err, response, body) => {
+                    err && console.error(err) && reject(err);
+        
+                    let $ = cheerio.load(body);
+        
+                    if (!($('table').length)) {
+                        resolve({success: false, error: "Credenciais incorretas."});
+                    } else {
+                        let words = [], msg = '';
+        
+                        $('tr').each(function() {
+                            words.push({
+                                texto: $(this).text()
+                            });
+                        });
+        
+                        let array_infos = {};
+                        let obj_cotas = {};
+        
+                        obj_cotas['saudacao'] = $(".form_description h3").text();
+        
+                        for (let i=1; i<words.length; i++) {
+                            array_infos[i] = (words[i].texto.split(/\n/).filter((e) => {
+                                return e.trim().length > 0;
+                            })).map(Function.prototype.call, String.prototype.trim);
+        
+                            obj_cotas[format_string(array_infos[i][0])] = {
+                                desc: array_infos[i][0],
+                                qtd_contratual: array_infos[i][1],
+                                qtd_utilizada: array_infos[i][2],
+                                qtd_estornada: array_infos[i][3],
+                                qtd_disponivel: array_infos[i][4]
+                            }
+                        }
+        
+                        resolve({success: true, data: obj_cotas});
+                    }
+                });
+            });
+            break;
         default:
             break;
     }
