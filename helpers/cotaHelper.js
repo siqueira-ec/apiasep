@@ -16,7 +16,7 @@ let uri_padrao = {
     },
     followAllRedirects: true,
     gzip: true,
-    jar: true,
+    // jar: true,
     encoding: 'binary'
 };
 
@@ -25,12 +25,14 @@ let format_string = (string) => {
 }
 
 let getCookie = async (cpf, adesao) => {
-    let uri = { ... uri_padrao };
+    let uri = {... uri_padrao};
     uri.form = {
         'txtCpf': `${cpf}`,
         'txtTermoAdesao': `${adesao}`,
         'do': 'PortalSegurado.verificaSegurado'
     };
+
+    uri.jar = request.jar();
 
     let cookie = await new Promise ((resolve, reject) => {
         request(uri, (err, response, body) => {
@@ -54,9 +56,12 @@ let getCota = async (cookie, format='json') => {
 
     uri.method = 'GET';
 
-    uri.headers['Cookie'] = cookie;
+    const j = request.jar();
+    const cookieoso = request.cookie(cookie);
 
     uri.uri = 'http://www.e-saude.iasep.pa.gov.br/segurado_iasep/?do=PortalSegurado.extrato';
+    j.setCookie(cookieoso, uri.uri);
+    uri.jar = j;
 
     switch (format) {
         case 'text':
